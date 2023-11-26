@@ -6,11 +6,11 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "Post-Covid Conditions"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - Isaac Peabody (itp2109)
+    - Katerina Athanasia (aa5258)
+  repo-url: https://github.com/aaniretak/post-covid-conditions
   date: today
   page-footer:
     right: |
