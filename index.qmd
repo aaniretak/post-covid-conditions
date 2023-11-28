@@ -3,3 +3,10 @@
 For most people infected with COVID-19, the symptoms are no more than a common cold, including fever or chills, cough, and fatigue. However, for some infected with COVID-19, the symptoms can continue for weeks, months, or even years after contracting the disease. The US Department of Health and Human Services (HHS), alongside the Centers for Disease Control and Prevention (CDC), has defined these extended symptoms as Long COVID. Specifically, the CDC has defined Long COVID as "signs, symptoms, and conditions that continue or develop after acute COVID-19 infection". 
 
 ![](Long_term_covid-19.jpg){width=100%}
+References:
+
+* https://commons.wikimedia.org/wiki/File:Long_term_covid-19.jpg
+* https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html
+* https://www.cdc.gov/coronavirus/2019-ncov/long-term-effects/index.html
+* https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j
+* https://catalog.data.gov/dataset/post-covid-conditions-89bb3
