@@ -1,17 +1,18 @@
 # Introduction
 
-For most people infected with COVID-19, the symptoms are no more than a common cold, including fever or chills, cough, and fatigue. However, for some infected with COVID-19, the symptoms can continue for weeks, months, or even years after contracting the disease. The US Department of Health and Human Services (HHS), alongside the Centers for Disease Control and Prevention (CDC), has defined these extended symptoms as Long COVID. Specifically, the CDC has defined Long COVID as "signs, symptoms, and conditions that continue or develop after acute COVID-19 infection". 
+For most people infected with COVID-19, the symptoms are no more than a common cold, including fever or chills, cough, and fatigue. However, for some infected with COVID-19, the symptoms can continue for weeks, months, or even years after contracting the disease. The US Department of Health and Human Services (HHS), alongside the Centers for Disease Control and Prevention (CDC), has defined these extended symptoms as **Long COVID**. Specifically, the CDC has defined Long COVID as "signs, symptoms, and conditions that continue or develop after acute COVID-19 infection". An overview of the various symptoms and their approximate prevalence can be seen below:
 
 ![](Long_term_covid-19.jpg){width=100%}
-Due to the high prevalence of COVID-19, especially when looking at the past three years, interest in the long-term effects of COVID-19 infection has been high among scientific researchers and public health officials alike. However, while research has shown that people who experience more severe COVID-19 symptoms are more likely to develop Long COVID, including those who are unvaccinated, little is known about who exactly experiences Long COVID and why. This discrepancy between the high prevalence of Long COVID and the relatively little known about it inspired us to dig deeper into Long COVID datasets, in order to gain insight into what demographics are most likely to suffer long-term effects from COVID-19. In particular, we are interested in the following questions:
 
-* How big of a problem actually is Long COVID? Have cases increased over the past year, decreased, or remained relatively constant, and what percentage of adults in the US are actually impacted?
-* Do factors like age, education, disability status, or geographic location impact the likelihood to develop Long COVID? If so, what factors are most impactful?
-* What impact does Long COVID have on various health metrics, such as level of fatigue or activity metrics?
+Due to the widespread presence of COVID-19 in the United States, especially looking at the past three years, interest in the long-term effects of COVID-19 infection has been high among scientific researchers and public health officials alike. However, while research has shown that people who experience more severe COVID-19 symptoms are more likely to develop Long COVID, including those who are unvaccinated, little is known about who exactly experiences Long COVID and why. This discrepancy between the high prevalence of Long COVID and the relatively little known about it inspired us to dig deeper into Long COVID datasets, in order to gain insight into what demographics are most likely to suffer long-term effects from COVID-19. In particular, we are interested in the following questions:
 
-By answering these questions, we hope to better inform health policy officials when it comes to allocation of resources for diagnosing and treating Long COVID. Additionally, we aim to answer questions as to the true effects of Long COVID on health when viewed on a large scale.
+* How big of a problem actually is Long COVID? Have reported cases **increased** over the past year, **decreased**, or remained **relatively constant**, and what percentage of adults in the US are actually impacted?
+* Do factors like **age**, **education**, **disability status**, or **geographic location** impact the likelihood to develop Long COVID? If so, what factors are most impactful?
+* What impact does Long COVID have on various health metrics, such as level of **fatigue** or **activity metrics**?
 
-References:
+By answering these questions, we hope to better inform health policy officials when it comes to allocation of resources for diagnosing and treating Long COVID. Additionally, we aim to answer questions as to the true effects of Long COVID on health when viewed on a large scale. 
+
+#References:
 
 * https://commons.wikimedia.org/wiki/File:Long_term_covid-19.jpg
 * https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html
