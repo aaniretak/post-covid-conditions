@@ -12,7 +12,7 @@ Due to the widespread presence of COVID-19 in the United States, especially look
 
 By answering these questions, we hope to better inform health policy officials when it comes to allocation of resources for diagnosing and treating Long COVID. Additionally, we aim to answer questions as to the true effects of Long COVID on health when viewed on a large scale. 
 
-#References:
+**References:**
 
 * https://commons.wikimedia.org/wiki/File:Long_term_covid-19.jpg
 * https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html
