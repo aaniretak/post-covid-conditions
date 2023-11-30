@@ -2,4 +2,155 @@
 
 ## Description
 
+### Dataset Source
+
+The dataset used for this project is survey data from the Household Pulse Survey, a survey administered by the U.S. Census Bureau designed to measure household experiences during the coronavirus pandemic. The Household Pulse Survey was administered starting in April 2020, and has been routinely administered on a two-weeks on, two-weeks off cycle since then. More complete information on the survey can be found on the Census Bureau website [here](https://www.census.gov/data/experimental-data-products/household-pulse-survey.html), and the exact timing of data collection can be seen below.
+
+![](data-collection-periods.png){fig-align="center" width="400"}
+
+In order to analyze the prevalence and effects of Long COVID among various demographics, we used a subset of the questions asked on the Household Pulse Survey that were specific to post-COVID-19 conditions. These questions focus on the occurrence of COVID symptoms that lasted at least three months post-testing positive for COVID-19, and were introduced beginning in Phase 3.5 of the Household Pulse Survey (on June 1, 2022). Responses to these questions were then collated by the National Center for Health Statistics, which were then published by the Centers for Disease Control and Prevention (CDC). This dataset, which was last updated on October 12, 2023 (following the conclusion of Phase 3.9) can be found on the CDC website [here](https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j).
+
+### Dataset Overview
+
+The dataset was directly downloaded from the CDC as a csv file. It consists of 14 columns and 11376 rows and contains the estimates of:
+
+a.  The percentage of all U.S. adults who said they ever had COVID.
+
+b.  The percentage of all U.S. adults who ever experienced post-COVID conditions.
+
+c.  The percentage of all U.S. adults who ever experienced post-COVID conditions among those who ever had COVID.
+
+d.  The percentage of all U.S. adults who are currently experiencing post-COVID conditions.
+
+e.  The percentage of adults who are currently experiencing post-COVID conditions (long COVID) among those who ever had COVID.
+
+Additionally, starting on September 14, 2022 (Phase 3.6) the following responses were also included:
+
+f.  The percentage of U.S. adults currently experiencing **any** activity limitations (either 'yes, a little' or 'yes, a lot' responses) from long COVID, either among adults who are currently experiencing long COVID or among all adults.
+
+g.  The percentage of U.S. adults currently experiencing **significant** activity limitations ('yes, a lot' response) from long COVID, either among adults who are currently experiencing long COVID or among all adults.
+
+The primary columns of the dataset are:
+
+-   **Indicator**: one of the categories (a-g) presented above.
+
+-   **Group**: The grouping of the population on which the percentages are measured. Included groupings are National Estimate (aggregated proportion across all U.S. adults), age, sex, gender identity, sexual orientation, race/ethnicity, education status, disability status, and state.
+
+-   **State**: Either the state that the state grouping corresponds to (if applicable), or United States.
+
+-   **Subgroup**: The category within the group specified by **Group** if not grouped by state, or equal to state otherwise.
+
+-   **Phase**, **Time Period**, **Time Period Label**: values regarding the time period of the data collection, including the Phase of data collection, time period the data was collected, and label for the time period.
+
+-   **Time Period Start Date**
+
+-   **Time Period End Date**
+
+-   **Value**: Estimate of the proportion of adults experiencing symptoms, with exact symptoms and conditions outlined in the indicator, group, and subgroup columns.
+
+The dataset contains additional columns with confidence intervals and quartile information as related to the value column. Specifically, the dataset contains columns for the low confidence interval bound (**LowCl**), high confidence interval bound (**HighCl**), **Confidence Interval**, **Quartile Number** (Either 1, 2, 3, or 4), and **Quartile Range**. An additional column **Suppression Flag** is also present, which contains a value of 1 if the value in **Value** is unreliable and is empty otherwise. 
+
+As part of the data release process, the CDC also acknowledged several limitations and concerns with the study, which are outlined in full on the CDC summary page for the Household Pulse Survey found here. The most important limitations and concerns are outlined below:
+
+1.  Throughout the duration of the data collection process, response rates across various demographics were relatively low. In fact, when adjusted for nonresponse and to match Census Bureau estimates of the population by age, sex, race and ethnicity, and educational attainment, response rates ranged from 3.9%-7.3%, which is much lower than most federally-sponsored surveys.
+
+2.  Confidence intervals included in the tables on this page only reflect the potential for sampling error. These intervals do not account for various nonsampling errors, including measurement errors, nonresponse errors, or processing errors. 
+
+3.  The percentage of adults who said they ever had COVID based on the Household Pulse Survey is lower than other estimates based on seroprevalence studies. This discrepancy between reported COVID cases and true COVID cases based on blood serum is likely due to the relatively high percentage of asymptomatic individuals with COVID, but is still worth noting.
+
 ## Missing value analysis
+
+```{r}
+#| warning: false
+
+# Libraries
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+# Import Data
+pcc <- read.csv("Post-COVID_Conditions.csv")
+```
+
+Since Suppression.Flag equal to 1 corresponds to non reliable estimates, we remove those rows from the dataset and the flag is not a useful column anymore, so it is also removed.
+
+```{r}
+# Remove unreliable estimates
+pcc <- pcc %>%
+  filter(is.na(Suppression.Flag)) %>%
+  select(!Suppression.Flag)
+
+# Search for NAs
+apply(pcc, 2, function (x) sum(is.na(x)))
+```
+
+```{r}
+# Value NAs
+pcc %>%
+  filter(is.na(Value)) %>%
+  distinct(Time.Period.Label)
+
+# LowCI NAs
+pcc %>%
+  filter(is.na(LowCI)) %>%
+  distinct(Time.Period.Label)
+
+# HighCI NAs
+pcc %>%
+  filter(is.na(HighCI)) %>%
+  distinct(Time.Period.Label)
+
+# Make sure entries during the breaks correspond to the NAs above
+pcc %>%
+  filter(Time.Period.Label == 'Aug 24 - Sep 13, 2022' | Time.Period.Label == 'Nov 30 - Dec 8, 2022') %>%
+  count()
+```
+
+Below follows a heatmap of the Values per Time Period. NAs for a period are colored red.
+
+```{r}
+# Visualization of Value NAs
+pcc %>%
+  ggplot(aes(x = "", y = Time.Period.Label, fill = Value)) +
+  geom_tile() +
+  scale_fill_continuous(na.value = 'red')
+```
+
+Based on the above, we can observe that the NAs for Value, LowCI and HighCI correspond to the break periods presented on the description of the dataset. Since data weren't collected during those periods, we can safely remove those rows from the dataset.
+
+```{r}
+# Remove dates that correspond to breaks of data collection
+pcc <- pcc %>%
+  filter(!is.na(Value))
+```
+
+```{r}
+# Quartile number non-NAs
+temp <- pcc %>%
+  filter(!is.na(Quartile.number)) %>%
+  select(Group)
+
+table(temp)
+```
+
+```{r}
+# Quartile number NAs
+temp <- pcc %>%
+  filter(is.na(Quartile.number)) %>%
+  select(Group)
+
+table(temp)
+```
+
+Below follows a heatmap of the the Quartile Number per Grouping. NAs for a period are colored red.
+
+```{r}
+# Visualization of Quartile Number NAs
+pcc %>%
+  ggplot(aes(x = "", y = Group, fill = Quartile.number)) +
+  geom_tile() +
+  scale_fill_continuous(na.value = 'red')
+```
+
+We can therefore deduct that the quartile number is given only when the grouping was made by State.

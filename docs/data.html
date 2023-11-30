@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -142,7 +176,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="header-section-number">2.1</span> Description</a>
+  <ul class="collapse">
+  <li><a href="#dataset-source" id="toc-dataset-source" class="nav-link" data-scroll-target="#dataset-source"><span class="header-section-number">2.1.1</span> Dataset Source</a></li>
+  <li><a href="#dataset-overview" id="toc-dataset-overview" class="nav-link" data-scroll-target="#dataset-overview"><span class="header-section-number">2.1.2</span> Dataset Overview</a></li>
+  </ul></li>
   <li><a href="#missing-value-analysis" id="toc-missing-value-analysis" class="nav-link" data-scroll-target="#missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aaniretak/post-covid-conditions/edit/main/data.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/aaniretak/post-covid-conditions/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -169,9 +207,218 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="description" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">2.1</span> Description</h2>
+<section id="dataset-source" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="dataset-source"><span class="header-section-number">2.1.1</span> Dataset Source</h3>
+<p>The dataset used for this project is survey data from the Household Pulse Survey, a survey administered by the U.S. Census Bureau designed to measure household experiences during the coronavirus pandemic. The Household Pulse Survey was administered starting in April 2020, and has been routinely administered on a two-weeks on, two-weeks off cycle since then. More complete information on the survey can be found on the Census Bureau website <a href="https://www.census.gov/data/experimental-data-products/household-pulse-survey.html">here</a>, and the exact timing of data collection can be seen below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data-collection-periods.png" class="img-fluid figure-img" width="400"></p>
+</figure>
+</div>
+<p>In order to analyze the prevalence and effects of Long COVID among various demographics, we used a subset of the questions asked on the Household Pulse Survey that were specific to post-COVID-19 conditions. These questions focus on the occurrence of COVID symptoms that lasted at least three months post-testing positive for COVID-19, and were introduced beginning in Phase 3.5 of the Household Pulse Survey (on June 1, 2022). Responses to these questions were then collated by the National Center for Health Statistics, which were then published by the Centers for Disease Control and Prevention (CDC). This dataset, which was last updated on October 12, 2023 (following the conclusion of Phase 3.9) can be found on the CDC website <a href="https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j">here</a>.</p>
+</section>
+<section id="dataset-overview" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="dataset-overview"><span class="header-section-number">2.1.2</span> Dataset Overview</h3>
+<p>The dataset was directly downloaded from the CDC as a csv file. It consists of 14 columns and 11376 rows and contains the estimates of:</p>
+<ol type="a">
+<li><p>The percentage of all U.S. adults who said they ever had COVID.</p></li>
+<li><p>The percentage of all U.S. adults who ever experienced post-COVID conditions.</p></li>
+<li><p>The percentage of all U.S. adults who ever experienced post-COVID conditions among those who ever had COVID.</p></li>
+<li><p>The percentage of all U.S. adults who are currently experiencing post-COVID conditions.</p></li>
+<li><p>The percentage of adults who are currently experiencing post-COVID conditions (long COVID) among those who ever had COVID.</p></li>
+</ol>
+<p>Additionally, starting on September 14, 2022 (Phase 3.6) the following responses were also included:</p>
+<ol start="6" type="a">
+<li><p>The percentage of U.S. adults currently experiencing <strong>any</strong> activity limitations (either ‘yes, a little’ or ‘yes, a lot’ responses) from long COVID, either among adults who are currently experiencing long COVID or among all adults.</p></li>
+<li><p>The percentage of U.S. adults currently experiencing <strong>significant</strong> activity limitations (‘yes, a lot’ response) from long COVID, either among adults who are currently experiencing long COVID or among all adults.</p></li>
+</ol>
+<p>The primary columns of the dataset are:</p>
+<ul>
+<li><p><strong>Indicator</strong>: one of the categories (a-g) presented above.</p></li>
+<li><p><strong>Group</strong>: The grouping of the population on which the percentages are measured. Included groupings are National Estimate (aggregated proportion across all U.S. adults), age, sex, gender identity, sexual orientation, race/ethnicity, education status, disability status, and state.</p></li>
+<li><p><strong>State</strong>: Either the state that the state grouping corresponds to (if applicable), or United States.</p></li>
+<li><p><strong>Subgroup</strong>: The category within the group specified by <strong>Group</strong> if not grouped by state, or equal to state otherwise.</p></li>
+<li><p><strong>Phase</strong>, <strong>Time Period</strong>, <strong>Time Period Label</strong>: values regarding the time period of the data collection, including the Phase of data collection, time period the data was collected, and label for the time period.</p></li>
+<li><p><strong>Time Period Start Date</strong></p></li>
+<li><p><strong>Time Period End Date</strong></p></li>
+<li><p><strong>Value</strong>: Estimate of the proportion of adults experiencing symptoms, with exact symptoms and conditions outlined in the indicator, group, and subgroup columns.</p></li>
+</ul>
+<p>The dataset contains additional columns with confidence intervals and quartile information as related to the value column. Specifically, the dataset contains columns for the low confidence interval bound (<strong>LowCl</strong>), high confidence interval bound (<strong>HighCl</strong>), <strong>Confidence Interval</strong>, <strong>Quartile Number</strong> (Either 1, 2, 3, or 4), and <strong>Quartile Range</strong>. An additional column <strong>Suppression Flag</strong> is also present, which contains a value of 1 if the value in <strong>Value</strong> is unreliable and is empty otherwise.&nbsp;</p>
+<p>As part of the data release process, the CDC also acknowledged several limitations and concerns with the study, which are outlined in full on the CDC summary page for the Household Pulse Survey found here. The most important limitations and concerns are outlined below:</p>
+<ol type="1">
+<li><p>Throughout the duration of the data collection process, response rates across various demographics were relatively low. In fact, when adjusted for nonresponse and to match Census Bureau estimates of the population by age, sex, race and ethnicity, and educational attainment, response rates ranged from 3.9%-7.3%, which is much lower than most federally-sponsored surveys.</p></li>
+<li><p>Confidence intervals included in the tables on this page only reflect the potential for sampling error. These intervals do not account for various nonsampling errors, including measurement errors, nonresponse errors, or processing errors.&nbsp;</p></li>
+<li><p>The percentage of adults who said they ever had COVID based on the Household Pulse Survey is lower than other estimates based on seroprevalence studies. This discrepancy between reported COVID cases and true COVID cases based on blood serum is likely due to the relatively high percentage of asymptomatic individuals with COVID, but is still worth noting.</p></li>
+</ol>
+</section>
 </section>
 <section id="missing-value-analysis" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">2.2</span> Missing value analysis</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Post-COVID_Conditions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Since Suppression.Flag equal to 1 corresponds to non reliable estimates, we remove those rows from the dataset and the flag is not a useful column anymore, so it is also removed.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove unreliable estimates</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(Suppression.Flag)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>Suppression.Flag)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for NAs</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(pcc, <span class="dv">2</span>, <span class="cf">function</span> (x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Indicator                  Group                  State 
+                     0                      0                      0 
+              Subgroup                  Phase            Time.Period 
+                     0                      0                      0 
+     Time.Period.Label Time.Period.Start.Date   Time.Period.End.Date 
+                     0                      0                      0 
+                 Value                  LowCI                 HighCI 
+                   378                    378                    378 
+   Confidence.Interval         Quartile.range        Quartile.number 
+                     0                      0                   4058 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Value NAs</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(Value)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Time.Period.Label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Time.Period.Label
+1 Aug 24 - Sep 13, 2022
+2  Nov 30 - Dec 8, 2022</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LowCI NAs</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(LowCI)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Time.Period.Label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Time.Period.Label
+1 Aug 24 - Sep 13, 2022
+2  Nov 30 - Dec 8, 2022</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># HighCI NAs</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(HighCI)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Time.Period.Label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Time.Period.Label
+1 Aug 24 - Sep 13, 2022
+2  Nov 30 - Dec 8, 2022</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure entries during the breaks correspond to the NAs above</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Time.Period.Label <span class="sc">==</span> <span class="st">'Aug 24 - Sep 13, 2022'</span> <span class="sc">|</span> Time.Period.Label <span class="sc">==</span> <span class="st">'Nov 30 - Dec 8, 2022'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    n
+1 378</code></pre>
+</div>
+</div>
+<p>Below follows a heatmap of the Values per Time Period. NAs for a period are colored red.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization of Value NAs</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> Time.Period.Label, <span class="at">fill =</span> Value)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_continuous</span>(<span class="at">na.value =</span> <span class="st">'red'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Based on the above, we can observe that the NAs for Value, LowCI and HighCI correspond to the break periods presented on the description of the dataset. Since data weren’t collected during those periods, we can safely remove those rows from the dataset.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove dates that correspond to breaks of data collection</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Value))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quartile number non-NAs</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Quartile.number)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Group)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Group
+By State 
+    6297 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quartile number NAs</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(Quartile.number)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Group)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Group
+                    By Age       By Disability status 
+                       961                        282 
+              By Education         By Gender identity 
+                       541                        382 
+By Race/Hispanic ethnicity                     By Sex 
+                       682                        282 
+     By Sexual orientation          National Estimate 
+                       409                        141 </code></pre>
+</div>
+</div>
+<p>Below follows a heatmap of the the Quartile Number per Grouping. NAs for a period are colored red.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization of Quartile Number NAs</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> Group, <span class="at">fill =</span> Quartile.number)) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_continuous</span>(<span class="at">na.value =</span> <span class="st">'red'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="data_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can therefore deduct that the quartile number is given only when the grouping was made by State.</p>
 
 
 </section>
