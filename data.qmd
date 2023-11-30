@@ -62,6 +62,7 @@ As part of the data release process, the CDC also acknowledged several limitatio
 
 ```{r}
 #| warning: false
+
 # Libraries
 library(dplyr)
 library(ggplot2)
