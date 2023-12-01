@@ -197,14 +197,14 @@ pcc <- pcc %>%
   filter(Time.Period.Label != "Aug 24 - Sep 13, 2022" & Time.Period.Label != "Nov 30 - Dec 8, 2022")
 ```
 
+Now, if we check the remaining rows that contain NA's, we see that all the other rows with NA values in **Value** are only due to the estimate not being reliable (**Suppression Flag** equal to 1). This indicates that all current NA values in **Value** are accounted for by known errors in the dataset.
+
 ```{r}
 VandSF <- pcc%>%
   filter(is.na(Value) & is.na(Suppression.Flag))
 
 print(paste("The number of remaining rows that have NA's in Value without the Suppression flag being raised:", nrow(VandSF)))
 ```
-
-Therefore, all the other NA values in **Value** are only due to the estimate not being reliable (**Suppression Flag** equal to 1) for the particular grouping.
 
 Lastly, since many rows contained NA values in **Quartile Number** and **Quartile Range**, we now wanted to see if there were any trends in what rows contained NA values in these columns. To do so, we created a heatmap of the number of NA's in the **Quartile Number** column, grouped by level in **Group**. Again, we took the total number of NA's in each group and divided by the total number of rows in each group, in order to get the **proportion** of observations that had NA's in value for each group.
 
