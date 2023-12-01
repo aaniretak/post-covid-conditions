@@ -6,7 +6,7 @@
 
 The dataset used for this project is survey data from the Household Pulse Survey, a survey administered by the U.S. Census Bureau designed to measure household experiences during the coronavirus pandemic. The Household Pulse Survey was administered starting in April 2020, and has been routinely administered on a two-weeks on, two-weeks off cycle since then. More complete information on the survey can be found on the Census Bureau website [here](https://www.census.gov/data/experimental-data-products/household-pulse-survey.html), and the exact timing of data collection can be seen below.
 
-![](data-collection-periods.png){fig-align="center" width=60%}
+![](data-collection-periods.png){fig-align="center" width="60%"}
 
 In order to analyze the prevalence and effects of Long COVID among various demographics, we used a subset of the questions asked on the Household Pulse Survey that were specific to post-COVID-19 conditions. These questions focus on the occurrence of COVID symptoms that lasted at least three months post-testing positive for COVID-19, and were introduced beginning in Phase 3.5 of the Household Pulse Survey (on June 1, 2022). Responses to these questions were then collated by the National Center for Health Statistics, which were then published by the Centers for Disease Control and Prevention (CDC). This dataset, which was last updated on October 12, 2023 (following the conclusion of Phase 3.9) can be found on the CDC website [here](https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j).
 
@@ -68,7 +68,7 @@ In order to assess the prevalence of Long COVID across the entire adult populati
 
 **Question 2: Do factors like age, education, disability status, or geographic location impact the likelihood to develop Long COVID? If so, what factors are most impactful?**
 
-In our dataset, all demographic information is contained as categorical variables within the **Group**, **Subgroup**, and **State** columns. By filtering data using the **Group** column, we will be able to select populations based on a single demographic identifier at a time, such as age, disability status, or geographic location (by state). We can then use the identifying information contained within either the **Subgroup** column or the **State** column to compare the proportion stored in **Value** across each of the different subgroups for each of the different demographics contained in the dataset. For this analysis, since we are most interested if certain demographics are at an increased risk to develop Long COVID, we will focus on the same levels of **Indicator** that we focused on in our analysis of question 1, in particular the proportion of adults that ever experienced Long COVID as a percentage of all adults and the proportion of adults that are currently experiencing Long COVID as a percentage of all adults. 
+In our dataset, all demographic information is contained as categorical variables within the **Group**, **Subgroup**, and **State** columns. By filtering data using the **Group** column, we will be able to select populations based on a single demographic identifier at a time, such as age, disability status, or geographic location (by state). We can then use the identifying information contained within either the **Subgroup** column or the **State** column to compare the proportion stored in **Value** across each of the different subgroups for each of the different demographics contained in the dataset. For this analysis, since we are most interested if certain demographics are at an increased risk to develop Long COVID, we will focus on the same levels of **Indicator** that we focused on in our analysis of question 1, in particular the proportion of adults that ever experienced Long COVID as a percentage of all adults and the proportion of adults that are currently experiencing Long COVID as a percentage of all adults.
 
 **Question 3: What impact does Long COVID have on various health metrics, such as level of fatigue or activity metrics?**
 
@@ -106,38 +106,37 @@ ggplot(na_sum, aes(x = na_sum, y = fct_reorder(Column, na_sum))) +
   theme_linedraw() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 According to the graph above, it seems likely that rows with no stored quartile number also have no stored quartile range, and similarly, rows that do not contain a stored value also do not contain a low or high confidence interval bound. Additionally, the large number of rows that contain an NA for **Suppression Flag** suggests that most rows in the dataset do **not** contain a value of 1 for **Suppression Flag**, indicating that most rows in the dataset contain reliable estimates for **Value**.
 
 To quickly confirm if rows with no stored quartile number also have no stored quartile range, we filtered the data for only rows that contained NA's in both the **Quartile Number** and **Quartile Range** columns, and compared the number of rows to the number of total rows that contain an NA in either of the two columns. Similarly, to confirm if rows that do not contain a stored value also do not contain a low or high confidence interval bound, we filtered the data for only rows that contained NA's in the **Value**, **LowCI**, and **HighCI** columns, and compared the number of rows to the number of total rows that contain an NA in any of the three columns.
+
 ```{r}
 # Get only rows that have an NA in Quartile Number AND Quartile Range
 QNandQR <- pcc %>%
   filter(is.na(Quartile.number) & is.na(Quartile.range))
 
-print_text_1 <- c("The number of rows that have NA's in Quartile Number AND Quartile Range:", nrow(QNandQR))
-print(gsub(",", "", toString(print_text_1)))
+print(paste("The number of rows that have NA's in Quartile Number AND Quartile Range:", nrow(QNandQR)))
 
 # Get only rows that have an NA in Quartile Number OR Quartile Range
 QNorQR <- pcc %>%
   filter(is.na(Quartile.number) | is.na(Quartile.range))
 
-print_text_2 <- c("The number of rows that have NA's in Quartile Number OR Quartile Range:", nrow(QNorQR))
-print(gsub(",", "", toString(print_text_2)))
+print(paste("The number of rows that have NA's in Quartile Number OR Quartile Range:", nrow(QNorQR)))
 
 # Get only rows that have an NA in Value, LowCI, AND HighCI
 VandLCIandHCI <- pcc %>%
   filter(is.na(Value) & is.na(LowCI) & is.na(HighCI))
 
-print_text_3 <- c("The number of rows that have NA's in Value, LowCI, AND HighCI:", nrow(VandLCIandHCI)) 
-print(gsub(",", "", toString(print_text_3)))
+print(paste("The number of rows that have NA's in Value, LowCI, AND HighCI:",nrow(VandLCIandHCI)))
 
 # Get only rows that have an NA in Value, LowCI, OR HighCI
 VorLCIorHCI <- pcc %>%
   filter(is.na(Value) | is.na(LowCI) | is.na(HighCI))
 
-print_text_4 <- c("The number of rows that have NA's in Value, LowCI, OR HighCI:", nrow(VorLCIorHCI))
-print(gsub(",", "", toString(print_text_4)))
+print(paste("The number of rows that have NA's in Value, LowCI, OR HighCI:",nrow(VorLCIorHCI)))
 ```
+
 From these lines, we can see that all rows that contain NA values in **Value** also contain NA values in **LowCI** and **HighCI**. This makes sense, since we cannot have a confidence interval for a value if the value does not exist. Similarly, almost all rows that have NA's in **Quartile Number** also have NA's in **Quartile Range**. Furthermore, when looking at the rows where there is an NA in either **Quartile Number** or **Quartile Range** but not both, we observed that the value of **Suppression Flag** for these rows is 1, indicating that the observation is unreliable. For safety, we set the value of **Value**, **LowCI**, **HighCI**, **Quartile Number**, and **Quartile Range** to be NA's if the value of **Suppression Flag** is 1, to prevent this issue in future analyses.
 
 ```{r}
@@ -189,6 +188,7 @@ Date_NAs %>%
   theme_linedraw() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 Looking at the heatmap above, we observe a major jump in the proportion of NA values between Jul 27 - Aug 8, 2022 and Aug 24 - Sep 13, 2022. We also see a large proportion of NA values during the Nov 30 - Dec 8, 2022 time period. Both of these observations make sense, given that these time periods correspond with breaks in the survey during which no information was collected. Since data weren't collected during those periods, and both periods had a **100% incidence** of NA values, we chose to remove those rows from the dataset for future analyses.
 
 ```{r}
@@ -196,6 +196,15 @@ Looking at the heatmap above, we observe a major jump in the proportion of NA va
 pcc <- pcc %>%
   filter(Time.Period.Label != "Aug 24 - Sep 13, 2022" & Time.Period.Label != "Nov 30 - Dec 8, 2022")
 ```
+
+```{r}
+VandSF <- pcc%>%
+  filter(is.na(Value) & is.na(Suppression.Flag))
+
+print(paste("The number of remaining rows that have NA's in Value without the Suppression flag being raised:", nrow(VandSF)))
+```
+
+Therefore, all the other NA values in **Value** are only due to the estimate not being reliable (**Suppression Flag** equal to 1) for the particular grouping.
 
 Lastly, since many rows contained NA values in **Quartile Number** and **Quartile Range**, we now wanted to see if there were any trends in what rows contained NA values in these columns. To do so, we created a heatmap of the number of NA's in the **Quartile Number** column, grouped by level in **Group**. Again, we took the total number of NA's in each group and divided by the total number of rows in each group, in order to get the **proportion** of observations that had NA's in value for each group.
 
@@ -228,9 +237,10 @@ Group_NAs %>%
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
+
 From the heatmap, we can see that the only group that does not contain all NA values in **Quartile Number** (and thus, also in **Quartile Range**) is grouping by state. Likely, this is because quartiles can only be calculated when there are a sufficient number of different subgroups within a given group. As such, since there are over 50 states included as subgroups when grouping by state (all 50 states + Washington DC), quartiles can be calculateed when grouping by state. However, for the other variables with much fewer subgroups, calculating a quartile number and quartile range is not feasible, and thus these values are excluded from the dataset.
 
 **References:**
 
-* https://www.census.gov/data/experimental-data-products/household-pulse-survey.html
-* https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j
+-   https://www.census.gov/data/experimental-data-products/household-pulse-survey.html
+-   https://data.cdc.gov/NCHS/Post-COVID-Conditions/gsea-w83j
