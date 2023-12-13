@@ -1,1 +1,76 @@
 # Results
+
+## Question 1: How big of a problem actually is Long COVID? Have reported cases increased over the past year, decreased, or remained relatively constant, and what percentage of adults in the US are actually impacted?
+
+Step 1: need to load in the data and process it
+```{r}
+# Import Required Libraries
+library(dplyr)
+library(ggplot2)
+library(forcats)
+
+# Import Data
+pcc <- read.csv("Post-COVID_Conditions.csv")
+```
+
+Step 2: Select only the data we want. For this question, since we are just looking at the national impact of Long COVID, we will only select the rows contianing a value of "National Estimate" in the `Group` column. Additionally, we only want the columns for `Indicator`, `Group`, `Time.Period.Start.Date`, `Time.Period.End.Data`, and `Value`.
+
+```{r}
+TimeData <- pcc %>% filter(Group == 'National Estimate') %>% select(c(Indicator, Group, Time.Period.Start.Date, Time.Period.End.Date, Value))
+
+# Also convert the Time Period Colums to dates
+TimeData$Time.Period.Start.Date <- as.Date(TimeData$Time.Period.Start.Date, format = "%m/%d/%Y")
+#TimeData$Time.Period.Start.Date <- format(TimeData$Time.Period.Start.Date, "%B %d, %Y")
+
+TimeData$Time.Period.End.Date<- as.Date(TimeData$Time.Period.End.Date, format = "%m/%d/%Y")
+#TimeData$Time.Period.End.Date <- format(TimeData$Time.Period.End.Date, "%B %d, %Y")
+```
+
+With the data filtered, we can now look at each indicator one at a time to identify overall trends in the United States. To test the code, we're going to first try this with national estimates for anyone that every had COVID, stored in rows with `Indicator` = "Currently experiencing long COVID" (either as a percentage of adults who ever had COVID, or as a percentage of all adults).
+
+```{r}
+CurrentExp <- TimeData %>% filter(Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID" | Indicator == "Currently experiencing long COVID, as a percentage of all adults")
+
+CurrentExp <- na.omit(CurrentExp)
+
+CurrentExp$Indicator <- recode(CurrentExp$Indicator, "Currently experiencing long COVID, as a percentage of adults who ever had COVID" = "As a % of Adults who have ever had COVID", "Currently experiencing long COVID, as a percentage of all adults" = "As a % of All Adults")
+
+ggplot(CurrentExp, aes(x = Time.Period.Start.Date, y = Value, color = Indicator)) +
+  geom_line() +
+  geom_point() +
+  ggtitle("Currently Experiencing Long COVID") + 
+  xlab("Data Collection Start Date") +
+  ylab("Percentage") +
+  scale_x_date(labels = scales::date_format("%b, %Y"), breaks = "2 month") +
+  theme_linedraw() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
+  labs(color = NULL)
+```
+
+From the graph, we see that overall, the proportion of adults that are currently experiencing Long COVID has consistently decreasd over the course of the data collection across both cohorts, particularly when looking at the adults that are currently experiencing Long COVID and comparing it to all adults who have ever had COVID.
+
+Now, we want to look at the percentage of adults who have EVER experienced Long COVID.
+
+```{r}
+EverExp <- TimeData %>% filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | Indicator == "Ever experienced long COVID, as a percentage of all adults")
+
+EverExp <- na.omit(EverExp)
+
+EverExp$Indicator <- recode(EverExp$Indicator, "Ever experienced long COVID, as a percentage of adults who ever had COVID" = "As a % of Adults who have ever had COVID", "Ever experienced long COVID, as a percentage of all adults" = "As a % of All Adults")
+
+ggplot(EverExp, aes(x = Time.Period.Start.Date, y = Value, color = Indicator)) +
+  geom_line() +
+  geom_point() +
+  ggtitle("Ever Experienced Long COVID") + 
+  xlab("Data Collection Start Date") +
+  ylab("Percentage") +
+  scale_x_date(labels = scales::date_format("%b, %Y"), breaks = "2 month") +
+  theme_linedraw() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
+  labs(color = NULL)
+```
+
+This seems like an error, or at least something funky with the data collection, as the total should not decrease.
+
+
+

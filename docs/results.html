@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -138,7 +172,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#question-1-how-big-of-a-problem-actually-is-long-covid-have-reported-cases-increased-over-the-past-year-decreased-or-remained-relatively-constant-and-what-percentage-of-adults-in-the-us-are-actually-impacted" id="toc-question-1-how-big-of-a-problem-actually-is-long-covid-have-reported-cases-increased-over-the-past-year-decreased-or-remained-relatively-constant-and-what-percentage-of-adults-in-the-us-are-actually-impacted" class="nav-link active" data-scroll-target="#question-1-how-big-of-a-problem-actually-is-long-covid-have-reported-cases-increased-over-the-past-year-decreased-or-remained-relatively-constant-and-what-percentage-of-adults-in-the-us-are-actually-impacted"><span class="header-section-number">3.1</span> Question 1: How big of a problem actually is Long COVID? Have reported cases increased over the past year, decreased, or remained relatively constant, and what percentage of adults in the US are actually impacted?</a></li>
+  <li><a href="#question-3-what-impact-does-long-covid-have-on-various-health-metrics-such-as-level-of-fatigue-or-activity-metrics" id="toc-question-3-what-impact-does-long-covid-have-on-various-health-metrics-such-as-level-of-fatigue-or-activity-metrics" class="nav-link" data-scroll-target="#question-3-what-impact-does-long-covid-have-on-various-health-metrics-such-as-level-of-fatigue-or-activity-metrics"><span class="header-section-number">3.2</span> Question 3: What impact does Long COVID have on various health metrics, such as level of fatigue or activity metrics?</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aaniretak/post-covid-conditions/edit/main/results.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/aaniretak/post-covid-conditions/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -160,8 +201,110 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="question-1-how-big-of-a-problem-actually-is-long-covid-have-reported-cases-increased-over-the-past-year-decreased-or-remained-relatively-constant-and-what-percentage-of-adults-in-the-us-are-actually-impacted" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="question-1-how-big-of-a-problem-actually-is-long-covid-have-reported-cases-increased-over-the-past-year-decreased-or-remained-relatively-constant-and-what-percentage-of-adults-in-the-us-are-actually-impacted"><span class="header-section-number">3.1</span> Question 1: How big of a problem actually is Long COVID? Have reported cases increased over the past year, decreased, or remained relatively constant, and what percentage of adults in the US are actually impacted?</h2>
+<p>Step 1: need to load in the data and process it</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Required Libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Data</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Post-COVID_Conditions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Step 2: Select only the data we want. For this question, since we are just looking at the national impact of Long COVID, we will only select the rows contianing a value of “National Estimate” in the <code>Group</code> column. Additionally, we only want the columns for <code>Indicator</code>, <code>Group</code>, <code>Time.Period.Start.Date</code>, <code>Time.Period.End.Data</code>, and <code>Value</code>.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>TimeData <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">'National Estimate'</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(Indicator, Group, Time.Period.Start.Date, Time.Period.End.Date, Value))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Also convert the Time Period Colums to dates</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.Start.Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.Start.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.Start.Date &lt;- format(TimeData$Time.Period.Start.Date, "%B %d, %Y")</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.End.Date<span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.End.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.End.Date &lt;- format(TimeData$Time.Period.End.Date, "%B %d, %Y")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>With the data filtered, we can now look at each indicator one at a time to identify overall trends in the United States. To test the code, we’re going to first try this with national estimates for anyone that every had COVID, stored in rows with <code>Indicator</code> = “Currently experiencing long COVID” (either as a percentage of adults who ever had COVID, or as a percentage of all adults).</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(CurrentExp)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>CurrentExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(CurrentExp<span class="sc">$</span>Indicator, <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(CurrentExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Currently Experiencing Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From the graph, we see that overall, the proportion of adults that are currently experiencing Long COVID has consistently decreasd over the course of the data collection across both cohorts, particularly when looking at the adults that are currently experiencing Long COVID and comparing it to all adults who have ever had COVID.</p>
+<p>Now, we want to look at the percentage of adults who have EVER experienced Long COVID.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(EverExp)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>EverExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(EverExp<span class="sc">$</span>Indicator, <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(EverExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Ever Experienced Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This seems like an error, or at least something funky with the data collection, as the total should not decrease.</p>
+</section>
+<section id="question-3-what-impact-does-long-covid-have-on-various-health-metrics-such-as-level-of-fatigue-or-activity-metrics" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="question-3-what-impact-does-long-covid-have-on-various-health-metrics-such-as-level-of-fatigue-or-activity-metrics"><span class="header-section-number">3.2</span> Question 3: What impact does Long COVID have on various health metrics, such as level of fatigue or activity metrics?</h2>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -417,7 +560,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aaniretak/post-covid-conditions/edit/main/results.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/aaniretak/post-covid-conditions/issues/new" class="toc-action">Report an issue</a></p></div></div></div>
+    </div>
     <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
   </div>
 </footer>
