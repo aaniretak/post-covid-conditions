@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -138,7 +172,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#investigating-the-trends-in-long-covid-prevalence" id="toc-investigating-the-trends-in-long-covid-prevalence" class="nav-link active" data-scroll-target="#investigating-the-trends-in-long-covid-prevalence"><span class="header-section-number">3.1</span> Investigating the Trends in Long COVID Prevalence</a></li>
+  <li><a href="#determining-the-key-factors-that-affect-long-covid-suspectibility" id="toc-determining-the-key-factors-that-affect-long-covid-suspectibility" class="nav-link" data-scroll-target="#determining-the-key-factors-that-affect-long-covid-suspectibility"><span class="header-section-number">3.2</span> Determining the Key Factors that Affect Long COVID Suspectibility</a></li>
+  <li><a href="#exploring-the-impact-of-long-covid-on-activity-limitations" id="toc-exploring-the-impact-of-long-covid-on-activity-limitations" class="nav-link" data-scroll-target="#exploring-the-impact-of-long-covid-on-activity-limitations"><span class="header-section-number">3.3</span> Exploring the impact of Long COVID on activity limitations</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aaniretak/post-covid-conditions/edit/main/results.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/aaniretak/post-covid-conditions/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -160,8 +202,304 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="investigating-the-trends-in-long-covid-prevalence" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="investigating-the-trends-in-long-covid-prevalence"><span class="header-section-number">3.1</span> Investigating the Trends in Long COVID Prevalence</h2>
+<p>Our initial objective was to gain insight into the prevalence of Long COVID in the United States. Ultimately, our goal is to figure out what groups are affected most by Long COVID in order to best inform health policy officials when it comes to allocation of resources for diagnosis and treatment, but if Long COVID has low prevalence or shows decreasing trends in prevalence, these interventions might have limited efficacy. As such, it is important to first establish a baseline of what overall proportion of adults in the United States are either currently experiencing post-COVID-related symptoms, or have experienced such symptoms in the past.</p>
+<p>To answer this question best, we chose to look at only rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S., as these rows will give us the best overview of trends in cases. We did so by first filtering our data to select the rows contianing a value of “National Estimate” in the <code>Group</code> column, and then only chose to keep the columns for <code>Indicator</code>, <code>Group</code>, <code>Time.Period.Start.Date</code>, <code>Time.Period.End.Data</code>, and <code>Value</code>.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Required Libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Post-COVID_Conditions.csv"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data according to the workflow above</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>TimeData <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">'National Estimate'</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(Indicator, Group, Time.Period.Start.Date, Time.Period.End.Date, Value))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Also need to convert the Time Period Colums to dates</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.Start.Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.Start.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.Start.Date &lt;- format(TimeData$Time.Period.Start.Date, "%B %d, %Y")</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.End.Date<span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.End.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.End.Date &lt;- format(TimeData$Time.Period.End.Date, "%B %d, %Y")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>With the data filtered, we now looked at each indicator one at a time to identify overall trends in Long COVID cases in the United States. Since we wanted to look at the prevalence of Long COVID, we first looked at adults that are currently experiencing Long COVID, either as a percentage of adults who ever had COVID or as a percentage of all adults in the U.S.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(CurrentExp)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>CurrentExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(CurrentExp<span class="sc">$</span>Indicator, <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(CurrentExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Currently Experiencing Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From the graph, we see that overall, the proportion of adults that are currently experiencing Long COVID has consistently decreased over the course of the data collection across both cohorts, particularly when looking at the adults that are currently experiencing Long COVID and comparing it to all adults who have ever had COVID. However, this trend seems to be leveling off around 10%, suggesting that around 10% of adults that get COVID also suffer from post-COVID symptoms of some severity. Since this percentage is relatively high, support for Long COVID diagnosis and treatment still should be advised.</p>
+<p>The dataset also contains responses for adults that have ever experienced Long COVID, either as a percentage of adults who have ever had COVID or as a percentage of all adults. In order to see how prevalent Long COVID has been over the course of the pandemic, we also wanted to see how trends in the overall number of adults impacted by Long COVID have changed over the survey duration. For this analysis, we again only selected rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(EverExp)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>EverExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(EverExp<span class="sc">$</span>Indicator, <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(EverExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Ever Experienced Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In the graph above, we expect the proportion of adults who have ever experienced Long COVID to <strong>increase</strong>, as each time the survey is answered, all people that have previously had Long COVID should respond yes, along with all people that have newly contacted Long COVID. While this trend is observed in the proportion of adults who have ever experienced Long COVID as a percentage of <strong>all adults</strong>, it is not the case for the proportion of adults who have ever experienced Long COVID as a percentage of all adults who <strong>ever had COVID</strong>. It is possible that this result is an artifact of the data collection process, but the exact reason cannot be uncovered by information in the dataset alone.</p>
+</section>
+<section id="determining-the-key-factors-that-affect-long-covid-suspectibility" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="determining-the-key-factors-that-affect-long-covid-suspectibility"><span class="header-section-number">3.2</span> Determining the Key Factors that Affect Long COVID Suspectibility</h2>
+<p>Using the graphs below, we attempted to get an understanding regarding which factors seem to have an effect on the likelihood of developing long COVID and how large of an effect that can be.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocessing</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Phase =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(Phase <span class="sc">==</span> <span class="fl">3.1</span> ,<span class="st">"3.10"</span>, <span class="fu">as.character</span>(Phase)), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"3.5"</span>,<span class="st">"3.6"</span>,<span class="st">"3.7"</span>,<span class="st">"3.8"</span>,<span class="st">"3.9"</span>,<span class="st">"3.10"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Subgroup =</span> <span class="fu">factor</span>(Subgroup,<span class="fu">levels</span>(<span class="fu">fct_relevel</span>(pcc<span class="sc">$</span>Subgroup,<span class="st">"Less than a high school diploma"</span>,<span class="st">"High school diploma or GED"</span>,<span class="st">"Some college/Associate's degree"</span>,<span class="st">"Bachelor's degree or higher"</span>)))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Indicator, Group, Subgroup, Phase, Value) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Age"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Age Group"</span>, <span class="at">x =</span> <span class="st">"Age Group"</span>, <span class="at">y =</span> <span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From the graph we can observe that age seems to play a role, to some extend, since for all phases the same pattern was observed. Middle aged people seem to be more susceptible, with a peak at 50-59 years old.</p>
+<p>However, as time passes, the differences seem to get smaller between age groups, almost disappearing but the pattern for the people who claim that they have experienced long COVID at some point, remains unchanged. It is also worth pointing out that the percentage of people above 80 years old experiencing long COVID during phases 3.6 and 3.8 increased.</p>
+<p>Lastly, we can notice that while the percentages of people below the age of 40 experiencing long COVID during each period are lower than that of people above the age of 60, the opposite can be observed when it comes to the percentages of people ever experiencing long COVID. This could be an indicator that younger people might be more susceptible to experiencing long COVID but their symptoms pass quicker compared to older people who might be less susceptible but experience the symptoms for longer.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Sex"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Sex"</span>, <span class="at">x =</span> <span class="st">"Sex"</span>, <span class="at">y =</span> <span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Regarding Sex as a factor, it seems to play a more crucial role since the differences between the percentages of females and males are much more significant. Females have been and still are more susceptible than men , more specifically men’s percentages are 2/3 of the female ones.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Race/Hispanic ethnicity"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Race/Hispanic Ethnicity"</span>, <span class="at">x =</span> <span class="st">"Race/Hispanic Ethnicity"</span>, <span class="at">y =</span> <span class="st">"Average Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Concerning the Race/Hispanic Ethnicity, Non-Hispanic Asian people are by far the least susceptible to developing long COVID while the Non-Hispanic of multiple races or races other than White, Black, Asian or Hispanic/Latino are the most susceptible. All the other races stand. in between and have almost equal percentages.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Gender identity"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Gender Identity"</span>, <span class="at">x =</span> <span class="st">"Gender Identity"</span>, <span class="at">y =</span> <span class="st">"Average Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We already covered the comparison between males and females but now we can notice that transgender individuals’ percentages are 2-3 times larger than those of males and sometimes double of that of females as well. Those differences are observed among the persons experiencing long COVID each period but for the ones claiming to ever have experienced, the pattern is the same but the differences are not that big. The percentages of transgender people still remain almost double of the corresponding male ones.</p>
+<p>However, we can notice that the dataset is not so trustworthy because of the sampling not being representative. one would expect the “ever experienced” percentage to rise during every period since this is a cumulative indicator by default. In reality though, the percentages of the cis-gender individuals remain relatively stable while for the transgender ones there is a significant increase on phases 3.5 and 3.8.</p>
+<p>The fact that the percentages of each category remain stable can maybe be explained by the fact that the long COVID symptoms remain for years sometimes so since the data were gathered bi-weekly, each phase lasts 2 months and we don’t have more than 1.5 years of data, not enough time passed for others to pinpoint their symptoms as long COVID ones.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Sexual orientation"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Sexual orientation"</span>, <span class="at">x =</span> <span class="st">"Sexual orientation"</span>, <span class="at">y =</span> <span class="st">"Average Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We wouldn’t expect the sexual orientation to play a role to whether someone develops long COVID but according to those graphs we can deduct that while the percentages of straight and gay/lesbian are roughly equal, the percentages of bisexual people are about one third higher for almost all periods.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Education"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Education"</span>, <span class="at">x =</span> <span class="st">"Education level"</span>, <span class="at">y =</span> <span class="st">"Average Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>When the level of education is concerned, we can observe that the higher the educational level, the lower the percentages were at first. But as the time/phases pass, the percentage of people having a bachelor’s degree or higher lies always a little lower while all the other percentages are roughly equal, with the percentage of people with some college/associate’s degree always being slighlty higher.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pcc <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">"By Disability status"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Subgroup, Phase, Value, Indicator) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Subgroup, <span class="at">y =</span> Value, <span class="at">fill =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"summary"</span>,<span class="at">fun=</span><span class="st">"mean"</span>, <span class="at">position=</span><span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Phase) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Currently experiencing long COVID"</span>, <span class="st">"Ever experienced long COVID"</span>)) <span class="sc">+</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Percentage per Disability status"</span>, <span class="at">x =</span> <span class="st">"Disability status"</span>, <span class="at">y =</span> <span class="st">"Average Percentage"</span>)<span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Whether someone is disabled or not seems to be the most impactful factor, since disabled people percentages are 2-3 times higher than those of the non-disabled ones and this pattern can be observed during all phases and both among those claiming to be currently experiencing during each phase and those claiming to have ever experienced.</p>
+</section>
+<section id="exploring-the-impact-of-long-covid-on-activity-limitations" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="exploring-the-impact-of-long-covid-on-activity-limitations"><span class="header-section-number">3.3</span> Exploring the impact of Long COVID on activity limitations</h2>
+<p>In our data set, the CDC measured the impact of Long COVID on overall health using questions about activity, looking at both those currently experiencing any activity limitations due to Long COVID and those currently experiencing significant activity limitations due to Long COVID (for more details as to the differences between these groups, please see the data overview section). To get an overview of the effect of Long COVID on health, we first wanted to see if Long COVID truly has a tangible impact on health. To do so, we returned to using national estimates of Long COVID (stored in rows contianing a value of “National Estimate” in the <code>Group</code> column), and specifically focused on the indicators of activity limiations over time.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Can re-use the TimeData dataframe that we created earlier to analyze time series data for question 1:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>AnyActivityLimits <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Any activity limitations from long COVID, as a percentage of adults who currently have long COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Any activity limitations from long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>AnyActivityLimits <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(AnyActivityLimits)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>AnyActivityLimits<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(AnyActivityLimits<span class="sc">$</span>Indicator, <span class="st">"Any activity limitations from long COVID, as a percentage of adults who currently have long COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had Long COVID"</span>, <span class="st">"Any activity limitations from long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AnyActivityLimits, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Currently experiencing any Activity Limitations"</span>) <span class="sc">+</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"3 month"</span>) <span class="sc">+</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The graph above suggests that most adults with Long COVID are also experiencing some degree of activity limitations, as throughout the past year the proportion of adults that have experienced any activity limitations out of all adults thaat have ever had Long COVID has hovered around 80%. While much lower, there is also a noticable proportion of adults with activity limitations from Long COVID out of all adults, around 6%. Additionally, this data suggests that this problem is pervasive, as the proportion of adults experiencing Long COVID-attributed activity limitations has remained consistent since September 2022.</p>
+<p>The dataset also let us look at those experiencing <strong>significant</strong> activity limitations, in a similar analysis to the above.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>SignifActivityLimits <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Significant activity limitations from long COVID, as a percentage of adults who currently have long COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Significant activity limitations from long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>SignifActivityLimits <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(SignifActivityLimits)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>SignifActivityLimits<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(SignifActivityLimits<span class="sc">$</span>Indicator, <span class="st">"Significant activity limitations from long COVID, as a percentage of adults who currently have long COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had Long COVID"</span>, <span class="st">"Significant activity limitations from long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(SignifActivityLimits, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Currently experiencing Significant Activity Limitations"</span>) <span class="sc">+</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"3 month"</span>) <span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here, the same trends as above are visible, albeit to a lesser extent. From this information, we concluded that of those that experience post-COVID symptoms, many (around 25%) experience some form of a lasting, significant impact to their overall health. There is also a non-zero proportion of all adults in the U.S. that experience significant health ramifications related to COVID (around 1.5%), suggesting that COVID presents a significant risk for developing adverse health events even when looking at the entire U.S. population.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -417,7 +755,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aaniretak/post-covid-conditions/edit/main/results.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/aaniretak/post-covid-conditions/issues/new" class="toc-action">Report an issue</a></p></div></div></div>
+    </div>
     <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
   </div>
 </footer>
