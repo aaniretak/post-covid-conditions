@@ -4,5 +4,70 @@
 
 Our initial objective was to gain insight into the prevalence of Long COVID in the United States. Ultimately, our goal is to figure out what groups are affected most by Long COVID in order to best inform health policy officials when it comes to allocation of resources for diagnosis and treatment, but if Long COVID has low prevalence or shows decreasing trends in prevalence, these interventions might have limited efficacy. As such, it is important to first establish a baseline of what overall proportion of adults in the United States are either currently experiencing post-COVID-related symptoms, or have experienced such symptoms in the past.
 
+To answer this question best, we chose to look at only rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S., as these rows will give us the best overview of trends in cases. We did so by first filtering our data to select the rows contianing a value of "National Estimate" in the `Group` column, and then only chose to keep the columns for `Indicator`, `Group`, `Time.Period.Start.Date`, `Time.Period.End.Data`, and `Value`.
+```{r}
+#| warning: false
+
+# Import Required Libraries
+library(dplyr)
+library(ggplot2)
+library(forcats)
+
+# Import Data
+pcc <- read.csv("Post-COVID_Conditions.csv")
+
+# Filter the data according to the workflow above
+TimeData <- pcc %>% filter(Group == 'National Estimate') %>% select(c(Indicator, Group, Time.Period.Start.Date, Time.Period.End.Date, Value))
+
+# Also need to convert the Time Period Colums to dates
+TimeData$Time.Period.Start.Date <- as.Date(TimeData$Time.Period.Start.Date, format = "%m/%d/%Y")
+#TimeData$Time.Period.Start.Date <- format(TimeData$Time.Period.Start.Date, "%B %d, %Y")
+
+TimeData$Time.Period.End.Date<- as.Date(TimeData$Time.Period.End.Date, format = "%m/%d/%Y")
+#TimeData$Time.Period.End.Date <- format(TimeData$Time.Period.End.Date, "%B %d, %Y")
+```
+With the data filtered, we now looked at each indicator one at a time to identify overall trends in Long COVID cases in the United States. Since we wanted to look at the prevalence of Long COVID, we first looked at adults that are currently experiencing Long COVID, either as a percentage of adults who ever had COVID or as a percentage of all adults in the U.S. 
+```{r}
+CurrentExp <- TimeData %>% filter(Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID" | Indicator == "Currently experiencing long COVID, as a percentage of all adults")
+
+CurrentExp <- na.omit(CurrentExp)
+
+CurrentExp$Indicator <- recode(CurrentExp$Indicator, "Currently experiencing long COVID, as a percentage of adults who ever had COVID" = "As a % of Adults who have ever had COVID", "Currently experiencing long COVID, as a percentage of all adults" = "As a % of All Adults")
+
+ggplot(CurrentExp, aes(x = Time.Period.Start.Date, y = Value, color = Indicator)) +
+  geom_line() +
+  geom_point() +
+  ggtitle("Currently Experiencing Long COVID") + 
+  xlab("Data Collection Start Date") +
+  ylab("Percentage") +
+  scale_x_date(labels = scales::date_format("%b, %Y"), breaks = "2 month") +
+  theme_linedraw() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
+  labs(color = NULL)
+```
+From the graph, we see that overall, the proportion of adults that are currently experiencing Long COVID has consistently decreased over the course of the data collection across both cohorts, particularly when looking at the adults that are currently experiencing Long COVID and comparing it to all adults who have ever had COVID. However, this trend seems to be leveling off around 10%, suggesting that around 10% of adults that get COVID also suffer from post-COVID symptoms of some severity. Since this percentage is relatively high, support for Long COVID diagnosis and treatment still should be advised.
+
+The dataset also contains responses for adults that have ever experienced Long COVID, either as a percentage of adults who have ever had COVID or as a percentage of all adults. In order to see how prevalent Long COVID has been over the course of the pandemic, we also wanted to see how trends in the overall number of adults impacted by Long COVID have changed over the survey duration. For this analysis, we again only selected rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S.
+
+```{r}
+EverExp <- TimeData %>% filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | Indicator == "Ever experienced long COVID, as a percentage of all adults")
+
+EverExp <- na.omit(EverExp)
+
+EverExp$Indicator <- recode(EverExp$Indicator, "Ever experienced long COVID, as a percentage of adults who ever had COVID" = "As a % of Adults who have ever had COVID", "Ever experienced long COVID, as a percentage of all adults" = "As a % of All Adults")
+
+ggplot(EverExp, aes(x = Time.Period.Start.Date, y = Value, color = Indicator)) +
+  geom_line() +
+  geom_point() +
+  ggtitle("Ever Experienced Long COVID") + 
+  xlab("Data Collection Start Date") +
+  ylab("Percentage") +
+  scale_x_date(labels = scales::date_format("%b, %Y"), breaks = "2 month") +
+  theme_linedraw() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
+  labs(color = NULL)
+```
+In the graph above, we expect the proportion of adults who have ever experienced Long COVID to **increase**, as each time the survey is answered, all people that have previously had Long COVID should respond yes, along with all people that have newly contacted Long COVID. While this trend is observed in the proportion of adults who have ever experienced Long COVID as a percentage of **all adults**, it is not the case for the proportion of adults who have ever experienced Long COVID as a percentage of all adults who **ever had COVID**. It is possible that this result is an artifact of the data collection process, but the exact reason cannot be uncovered by information in the dataset alone.
+
 
 
