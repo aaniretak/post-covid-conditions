@@ -248,5 +248,3 @@ ggplot(SignifActivityLimits, aes(x = Time.Period.Start.Date, y = Value, color = 
   labs(color = NULL)
 ```
 Here, the same trends as above are visible, albeit to a lesser extent. From this information, we concluded that of those that experience post-COVID symptoms, many (around 25%) experience some form of a lasting, significant impact to their overall health. There is also a non-zero proportion of all adults in the U.S. that experience significant health ramifications related to COVID (around 1.5%), suggesting that COVID presents a significant risk for developing adverse health events even when looking at the entire U.S. population. 
-
-
