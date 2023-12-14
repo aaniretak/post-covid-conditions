@@ -67,12 +67,11 @@ ggplot(EverExp, aes(x = Time.Period.Start.Date, y = Value, color = Indicator)) +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
   labs(color = NULL)
 ```
-In the graph above, we expect the proportion of adults who have ever experienced Long COVID to **increase**, as each time the survey is answered, all people that have previously had Long COVID should respond yes, along with all people that have newly contacted Long COVID. While this trend is observed in the proportion of adults who have ever experienced Long COVID as a percentage of **all adults**, it is not the case for the proportion of adults who have ever experienced Long COVID as a percentage of all adults who **ever had COVID**. It is possible that this result is an artifact of the data collection process, but the exact reason cannot be uncovered by information in the dataset alone.
+In the graph above, we expect the proportion of adults who have ever experienced Long COVID to **increase**, as each time the survey is answered, all people that have previously had Long COVID should respond yes, along with all people that have newly contacted Long COVID. While this trend is seen in the proportion of adults who have ever experienced Long COVID as a percentage of **all adults**, it is not the case for the proportion of adults who have ever experienced Long COVID as a percentage of all adults who **ever had COVID**. It is possible that this result is an artifact of the data collection process, but the exact reason cannot be uncovered by information in the dataset alone.
 
 ## Determining the Key Factors that Affect Long COVID Suspectibility
 
-Using the graphs below, we attempted to get an understanding regarding which factors seem to have an effect on the likelihood of developing long COVID and how large of an effect that can be.
-
+We next sought to better understand what demographic factors, including age, gender, and geographic location, played a role in Long COVID susceptibility. To do so, we first broke up our data into Phases, so that we could analyze several months of data at a time (for more information on the Phases of survey information collection, see the **Data** section). This filtering required some initial processing of the data, which we performed below.
 ```{r}
 # Load in the data with the required modifications to Phase (convert to a factor) and Subgroup (convert to a factor)
 # Also only want to select the columns we want: store as a new df, RenamedPcc
@@ -91,6 +90,7 @@ RenamedPcc <- pcc %>%
   na.omit()
 ```
 
+With our data processing complete, we could now look at the impact of individual demographic factors on Long COVID susceptibility, measured by both the percentage of adults that are currently experiencing Long COVID and the percentage of adults that have ever experienced Long COVID. For this analysis, both these proportions are taken out of all adults who have ever had COVID, as this metric is less impacted by variation in how many people with COVID are surveyed. The first factor we looked at was **age**, which separated adults based on 10-year age ranges.
 ```{r}
 # Generate the first series of bar charts: looking at the effect of age on the % of adults experiencing Long COVID
 RenamedPcc %>%
@@ -111,35 +111,30 @@ RenamedPcc %>%
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
   coord_flip()
 ```
+From the graph above, we see that age does seem to affect likelihood to develop Long COVID, as certain age ranges have greater measured proportions of those currently experiencing Long COVID and those that ever experienced Long COVID than other age ranges. In particular, middle-aged people seem to be most susceptible, with a peak for both currently experiencing and ever experienced Long COVID at 50-59 years old across most of the different phases of survey collection. It is also interesting to note here that while the trends for "Ever Experienced Long COVID" do not change much across the various phases, the trends for "Currently Experiencing Long COVID" do. Most notably, the proportion of adults at least 80 years old experiencing Long COVID stays consistently around or above 10% during each phase, even as the proportions for the other age ranges drops. While the exact reason for this trend is unknown, one possible explanation could be that despite the lower number of 80 + year olds affected by Long COVID, those affected tend to stay affected for longer periods of time.
 
-From the graph we can observe that age seems to play a role, to some extend, since for all phases the same pattern was observed. Middle aged people seem to be more susceptible, with a peak at 50-59 years old.
-
-However, as time passes, the differences seem to get smaller between age groups, almost disappearing but the pattern for the people who claim that they have experienced long COVID at some point, remains unchanged. It is also worth pointing out that the percentage of people above 80 years old experiencing long COVID during phases 3.6 and 3.8 increased.
-
-Lastly, we can notice that while the percentages of people below the age of 40 experiencing long COVID during each period are lower than that of people above the age of 60, the opposite can be observed when it comes to the percentages of people ever experiencing long COVID. This could be an indicator that younger people might be more susceptible to experiencing long COVID but their symptoms pass quicker compared to older people who might be less susceptible but experience the symptoms for longer.
-
+We next sought to analyze the effect of gender identity on Long COVID susceptibility, in a similar analysis to the one above. Again, we separated our data by survey collection phases, and took all proportions out of all adults who ever had COVID, for the same reasons as before.
 ```{r}
-# Second bar chart set: looking at the effect of Sex on the % of adults experiencing Long COVID
+# Second bar chart set: looking at the effect of Gender Identity on the % of adults experiencing Long COVID
 RenamedPcc %>%
-  filter(Group == "By Sex") %>%
-  filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | 
-           Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID") %>%
+  filter(Group == "By Gender identity") %>%
+  filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID") %>%
   select(Subgroup, Phase, Value, Indicator) %>%
-  mutate(Subgroup = factor(Subgroup, levels = c("Female", "Male"))) %>%
-  ggplot(aes(x = fct_rev(Subgroup), y = Value, fill = Indicator)) +
+  mutate(Subgroup = factor(Subgroup, levels = c("Cis-gender male", "Cis-gender female", "Transgender"))) %>%
+  ggplot(aes(x = Subgroup, y = Value, fill = Indicator)) +
   geom_bar(stat = "summary",fun="mean", position='dodge') +
   facet_wrap(~ Phase) +
   scale_fill_discrete(labels = c("Currently Experiencing Long COVID", "Ever Experienced Long COVID"), 
                       name = "Condition:") +
-  labs(title = "% of Adults out of All Adults who Ever had COVID, separated by Sex", 
-       x = "Sex", y = "Percentage") +
+  labs(title = "% of Adults out of All Adults who Ever had COVID,\nseparated by Gender Identity", 
+       x = "Gender Identity", y = "Percentage") +
   theme_linedraw() +
-  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom") +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
   coord_flip()
 ```
+From this graph, we see that cis-gender males are the least susceptible to Long COVID, while cis-gender females and people that identify as transgender were the most susceptible. In particular, transgender individuals' percentages are 2-3 times larger than those of cis-gender males, and for certain survey phases almost double of that of cis-gender females as well. However, we also noticed similar issues with the "Ever Experienced Long COVID" survey results to earlier analyses in this graph. Assuming that data collection is consistent, the values of "Ever Experienced Long COVID" should **not** decrease over time, as this is a cumulative measure. That being said, in reality, we see that cumulative proportions for all three gender identities drop across the 6 phases, which is contrary to the expected trend.
 
-Regarding Sex as a factor, it seems to play a more crucial role since the differences between the percentages of females and males are much more significant. Females have been and still are more susceptible than men , more specifically men's percentages are 2/3 of the female ones.
-
+The third factor we looked at was if certain races or ethnicities were more affected by Long COVID, in a similar analysis to the previous ones.
 ```{r}
 # Third bar chart set: looking at the effect of Race on the % of adults experiencing Long COVID
 RenamedPcc %>%
@@ -161,54 +156,9 @@ RenamedPcc %>%
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
   coord_flip()
 ```
+When looking at Race/Hispanic Ethnicity, Non-Hispanic Asian people are by far the least susceptible to developing long COVID, having the lowest proportion of adults currently experiencing Long COVID and the lowest proportion of adults that have ever experienced Long COVID across all 6 phases. On the other hand, people that are either mixed race or do not identify as either Hispanic/Latino, Black, White, or Asian were the most susceptible to developing Long COVID across all 6 phases. 
 
-Concerning the Race/Hispanic Ethnicity, Non-Hispanic Asian people are by far the least susceptible to developing long COVID while the Non-Hispanic of multiple races or races other than White, Black, Asian or Hispanic/Latino are the most susceptible. All the other races stand. in between and have almost equal percentages.
-
-```{r}
-RenamedPcc %>%
-  filter(Group == "By Gender identity") %>%
-  filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID") %>%
-  select(Subgroup, Phase, Value, Indicator) %>%
-  mutate(Subgroup = factor(Subgroup, levels = c("Cis-gender male", "Cis-gender female", "Transgender"))) %>%
-  ggplot(aes(x = Subgroup, y = Value, fill = Indicator)) +
-  geom_bar(stat = "summary",fun="mean", position='dodge') +
-  facet_wrap(~ Phase) +
-  scale_fill_discrete(labels = c("Currently Experiencing Long COVID", "Ever Experienced Long COVID"), 
-                      name = "Condition:") +
-  labs(title = "% of Adults out of All Adults who Ever had COVID,\nseparated by Gender Identity", 
-       x = "Gender Identity", y = "Percentage") +
-  theme_linedraw() +
-  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
-  coord_flip()
-```
-
-We already covered the comparison between males and females but now we can notice that transgender individuals' percentages are 2-3 times larger than those of males and sometimes double of that of females as well. Those differences are observed among the persons experiencing long COVID each period but for the ones claiming to ever have experienced, the pattern is the same but the differences are not that big. The percentages of transgender people still remain almost double of the corresponding male ones.
-
-However, we can notice that the dataset is not so trustworthy because of the sampling not being representative. one would expect the "ever experienced" percentage to rise during every period since this is a cumulative indicator by default. In reality though, the percentages of the cis-gender individuals remain relatively stable while for the transgender ones there is a significant increase on phases 3.5 and 3.8.
-
-The fact that the percentages of each category remain stable can maybe be explained by the fact that the long COVID symptoms remain for years sometimes so since the data were gathered bi-weekly, each phase lasts 2 months and we don't have more than 1.5 years of data, not enough time passed for others to pinpoint their symptoms as long COVID ones.
-
-```{r}
-RenamedPcc %>%
-  filter(Group == "By Sexual orientation") %>%
-  filter(Indicator == "Ever experienced long COVID, as a percentage of adults who ever had COVID" | Indicator == "Currently experiencing long COVID, as a percentage of adults who ever had COVID") %>%
-  select(Subgroup, Phase, Value, Indicator) %>%
-  mutate(Subgroup = factor(Subgroup, levels = c("Straight", "Gay or lesbian", "Bisexual"))) %>%
-  ggplot(aes(x = Subgroup, y = Value, fill = Indicator)) +
-  geom_bar(stat = "summary",fun="mean", position='dodge') +
-  facet_wrap(~ Phase) +
-  scale_fill_discrete(labels = c("Currently Experiencing Long COVID", "Ever Experienced Long COVID"), 
-                      name = "Condition:") +
-  scale_x_discrete(labels = c("Straight", "Gay/Lesbian", "Bisexual")) +
-  labs(title = "% of Adults out of All Adults who Ever had COVID,\nseparated by Sexual Orientation", 
-       x = "Sexual Orientation", y = "Percentage") +
-  theme_linedraw() +
-  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
-  coord_flip()
-```
-
-We wouldn't expect the sexual orientation to play a role to whether someone develops long COVID but according to those graphs we can deduct that while the percentages of straight and gay/lesbian are roughly equal, the percentages of bisexual people are about one third higher for almost all periods.
-
+Next, we looked at whether or not education status affects whether or not you experience post-COVID symptoms.
 ```{r}
 RenamedPcc %>%
   filter(Group == "By Education") %>%
@@ -227,8 +177,9 @@ RenamedPcc %>%
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
   coord_flip()
 ```
-When the level of education is concerned, we can observe that the higher the educational level, the lower the percentages were at first. But as the time/phases pass, the percentage of people having a bachelor's degree or higher lies always a little lower while all the other percentages are roughly equal, with the percentage of people with some college/associate's degree always being slighlty higher.
+As far as the level of education is concerned, we observe that the higher the educational level, the lower the proportion of adults affected by Long COVID. This trend is the strongest during the early phases of data collection (phases 3.5-3.7), but levels off a little as the data collection continues through phase 3.10. In fact, some violations of this trend can be seen in the later phases, with almost equal people currently experiencing Long COVID across adults without a high school diploma and adults with a bachelor's degree in phase 3.10.
 
+We continued by looking at disability status, in particular trying to identify differences between people with and without disabilities when it comes to susceptibility to Long COVID.
 ```{r}
 RenamedPcc %>%
   filter(Group == "By Disability status") %>%
@@ -247,12 +198,11 @@ RenamedPcc %>%
   theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom", plot.margin = margin(r = 0)) +
   coord_flip()
 ```
-
-Whether someone is disabled or not seems to be the most impactful factor, since disabled people percentages are 2-3 times higher than those of the non-disabled ones and this pattern can be observed during all phases and both among those claiming to be currently experiencing during each phase and those claiming to have ever experienced.
+Whether someone is disabled or not seems to be one of the most impactful factors, since adults with disabilities have 2-3 times higher rates of Long COVID than those of the non-disabled adults. This pattern can be observed during all phases, and both among those claiming to be currently experiencing Long COVID during each phase and those claiming to have ever experienced Long COVID.
 
 ## Exploring the impact of Long COVID on activity limitations
 
-In our data set, the CDC measured the impact of Long COVID on overall health using questions about activity, looking at both those currently experiencing any activity limitations due to Long COVID and those currently experiencing significant activity limitations due to Long COVID (for more details as to the differences between these groups, please see the data overview section). To get an overview of the effect of Long COVID on health, we first wanted to see if Long COVID truly has a tangible impact on health. To do so, we returned to using national estimates of Long COVID (stored in rows contianing a value of "National Estimate" in the `Group` column), and specifically focused on the indicators of activity limiations over time.
+In our data set, the CDC measured the impact of Long COVID on overall health using questions about activity, looking at both those currently experiencing any activity limitations due to Long COVID and those currently experiencing significant activity limitations due to Long COVID (for more details as to the differences between these groups, please see the data overview section). To get an overview of the effect of Long COVID on health, we now wanted to see if Long COVID truly has a tangible impact on health. To do so, we returned to using national estimates of Long COVID (stored in rows contianing a value of "National Estimate" in the `Group` column), and specifically focused on the indicators of activity limiations over time.
 ```{r}
 # Can re-use the TimeData dataframe that we created earlier to analyze time series data for question 1:
 AnyActivityLimits <- TimeData %>% filter(Indicator == "Any activity limitations from long COVID, as a percentage of adults who currently have long COVID" | Indicator == "Any activity limitations from long COVID, as a percentage of all adults")
