@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -169,6 +203,81 @@ ul.task-list li input[type="checkbox"] {
 <section id="investigating-the-trends-in-long-covid-prevalence" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="investigating-the-trends-in-long-covid-prevalence"><span class="header-section-number">3.1</span> Investigating the Trends in Long COVID Prevalence</h2>
 <p>Our initial objective was to gain insight into the prevalence of Long COVID in the United States. Ultimately, our goal is to figure out what groups are affected most by Long COVID in order to best inform health policy officials when it comes to allocation of resources for diagnosis and treatment, but if Long COVID has low prevalence or shows decreasing trends in prevalence, these interventions might have limited efficacy. As such, it is important to first establish a baseline of what overall proportion of adults in the United States are either currently experiencing post-COVID-related symptoms, or have experienced such symptoms in the past.</p>
+<p>To answer this question best, we chose to look at only rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S., as these rows will give us the best overview of trends in cases. We did so by first filtering our data to select the rows contianing a value of “National Estimate” in the <code>Group</code> column, and then only chose to keep the columns for <code>Indicator</code>, <code>Group</code>, <code>Time.Period.Start.Date</code>, <code>Time.Period.End.Data</code>, and <code>Value</code>.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Required Libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Import Data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pcc <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Post-COVID_Conditions.csv"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data according to the workflow above</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>TimeData <span class="ot">&lt;-</span> pcc <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Group <span class="sc">==</span> <span class="st">'National Estimate'</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(Indicator, Group, Time.Period.Start.Date, Time.Period.End.Date, Value))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Also need to convert the Time Period Colums to dates</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.Start.Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.Start.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.Start.Date &lt;- format(TimeData$Time.Period.Start.Date, "%B %d, %Y")</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>TimeData<span class="sc">$</span>Time.Period.End.Date<span class="ot">&lt;-</span> <span class="fu">as.Date</span>(TimeData<span class="sc">$</span>Time.Period.End.Date, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#TimeData$Time.Period.End.Date &lt;- format(TimeData$Time.Period.End.Date, "%B %d, %Y")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>With the data filtered, we now looked at each indicator one at a time to identify overall trends in Long COVID cases in the United States. Since we wanted to look at the prevalence of Long COVID, we first looked at adults that are currently experiencing Long COVID, either as a percentage of adults who ever had COVID or as a percentage of all adults in the U.S.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>CurrentExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(CurrentExp)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>CurrentExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(CurrentExp<span class="sc">$</span>Indicator, <span class="st">"Currently experiencing long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Currently experiencing long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(CurrentExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Currently Experiencing Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From the graph, we see that overall, the proportion of adults that are currently experiencing Long COVID has consistently decreased over the course of the data collection across both cohorts, particularly when looking at the adults that are currently experiencing Long COVID and comparing it to all adults who have ever had COVID. However, this trend seems to be leveling off around 10%, suggesting that around 10% of adults that get COVID also suffer from post-COVID symptoms of some severity. Since this percentage is relatively high, support for Long COVID diagnosis and treatment still should be advised.</p>
+<p>The dataset also contains responses for adults that have ever experienced Long COVID, either as a percentage of adults who have ever had COVID or as a percentage of all adults. In order to see how prevalent Long COVID has been over the course of the pandemic, we also wanted to see how trends in the overall number of adults impacted by Long COVID have changed over the survey duration. For this analysis, we again only selected rows in our dataset containing the National Estimates for Long COVID cases among adults in the U.S.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> TimeData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="sc">|</span> Indicator <span class="sc">==</span> <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>EverExp <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(EverExp)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>EverExp<span class="sc">$</span>Indicator <span class="ot">&lt;-</span> <span class="fu">recode</span>(EverExp<span class="sc">$</span>Indicator, <span class="st">"Ever experienced long COVID, as a percentage of adults who ever had COVID"</span> <span class="ot">=</span> <span class="st">"As a % of Adults who have ever had COVID"</span>, <span class="st">"Ever experienced long COVID, as a percentage of all adults"</span> <span class="ot">=</span> <span class="st">"As a % of All Adults"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(EverExp, <span class="fu">aes</span>(<span class="at">x =</span> Time.Period.Start.Date, <span class="at">y =</span> Value, <span class="at">color =</span> Indicator)) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Ever Experienced Long COVID"</span>) <span class="sc">+</span> </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Collection Start Date"</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">date_format</span>(<span class="st">"%b, %Y"</span>), <span class="at">breaks =</span> <span class="st">"2 month"</span>) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In the graph above, we expect the proportion of adults who have ever experienced Long COVID to <strong>increase</strong>, as each time the survey is answered, all people that have previously had Long COVID should respond yes, along with all people that have newly contacted Long COVID. While this trend is observed in the proportion of adults who have ever experienced Long COVID as a percentage of <strong>all adults</strong>, it is not the case for the proportion of adults who have ever experienced Long COVID as a percentage of all adults who <strong>ever had COVID</strong>. It is possible that this result is an artifact of the data collection process, but the exact reason cannot be uncovered by information in the dataset alone.</p>
 
 
 </section>
