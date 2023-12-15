@@ -387,15 +387,7 @@ var data1_p7 = [
         .append('div')
         .attr('class', 'button-container');
 
-    // Create buttons
-    buttonContainer
-        .selectAll('button')
-        .data(["Phase 3.6", "Phase 3.7", "Phase 3.8", "Phase 3.9", "Phase 3.10"])
-        .enter()
-        .append('button')
-        .attr('class', (d, i) => i === 0 ? 'button selected' : 'button') // Set the first button as selected by default
-        .text(d => d)
-        .on('click', function (phase) {
+      function buttonUpdate(phase) {
             switch (phase) {
                 case "Phase 3.6":
                     createDotPlot(data1_p6, 0, "Race/ Ethnicity");
@@ -429,4 +421,4 @@ var data1_p7 = [
             // Update the selected class for buttons
             d3.selectAll('.button').classed('selected', false);
             d3.select(this).classed('selected', true);
-        });
+        };
