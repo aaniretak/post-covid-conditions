@@ -361,14 +361,16 @@ var data1_p7 = [
         .attr('class', 'legend');
 
     const legendColors = ['#FF00E6', '#FF9900', '#00FF19', '#0017FF'];
+    const legendColorPosition = [50, 315, 535, 875];
     const legendText = ['Significant limitations/all adults', 'Any limitations/all adults', 'Significant limitations/adults with COVID', 'Any limitations/adults with COVID'];
+    const legendTextPosition = [65, 330, 550, 890];
     const legendCircleSize = 6;
 
     legend.selectAll('.legend-dots')
         .data(legendColors)
         .enter()
         .append('circle')
-        .attr('cx', (d,i) => (300*i) + 30)
+        .attr('cx', (d,i) => legendColorPosition[i])
         .attr('cy', 360)
         .attr('r', legendCircleSize)
         .style('fill', d => d);
@@ -377,7 +379,7 @@ var data1_p7 = [
         .data(legendText)
         .enter()
         .append('text')
-        .attr('x', (d,i) => (300*i) + 45)
+        .attr('x', (d,i) => legendTextPosition[i])
         .attr('y', (d, i) => 360)
         .attr('dy', '0.35em')
         .text(d => d);
@@ -422,3 +424,5 @@ var data1_p7 = [
             d3.selectAll('.button').classed('selected', false);
             d3.select(this).classed('selected', true);
         };
+
+buttonUpdate.call(document.querySelector('.button.selected'), 'Phase 3.6');

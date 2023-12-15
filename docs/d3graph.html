@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -160,8 +160,9 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>In the previous section, we analyzed what demographics are most susceptible to developing Long COVID, and looked at whether or not Long COVID poses a serious health risk in terms of lasting activity limitations. However, we did not look at what demographics experience the most serious health ramifications in terms of activity limitations. Here, you get to look at this on your own! To use our interactive tool, click on the button for <strong>Phase</strong> to select which phase you want to look at. The graphs above will automatically update based on what phase you select, and will show the impact of Long COVID on the 4 activity metrics included in the dataset by <strong>Race / Ethnicity</strong>, <strong>Gender Identity</strong>, and <strong>Disability Status</strong>. To read the legend, <strong>Significant limitations</strong> vs.&nbsp;<strong>Any limitations</strong> reflects if the data point is looking at the proportion of adults with either significant activity limitations or any activity limitations, while <strong>/all adults</strong> vs.&nbsp;<strong>/adults with COVID</strong> reflects if the proportion is out of all adults or only out of adults with COVID. See what trends you can find, and see how they compare to the same trends in Long COVID susceptibility from our previous analysis! (Hint: many should look similar)</p>
 <style>
-.line {
+        .line {
             stroke: grey;
             stroke-width: 1; /* Solid line */
         }
@@ -177,12 +178,19 @@ ul.task-list li input[type="checkbox"] {
             padding: 8px 16px;
             margin: 0 10px;
             cursor: pointer;
+            background-color: white;
+            color: black;
+        }
+        
+        .button:not(:last-child) {
+            margin-right: 10px;
         }
 
-        .selected {
+        .button.selected {
             background-color: #2196F3;
             color: white;
         }
+        
         .title {
             font-size: 18px;
             font-weight: bold;
@@ -203,10 +211,11 @@ ul.task-list li input[type="checkbox"] {
 <div style="padding-left: 30px;">
 <p>
 </p>
-<p><button type="button" onclick="buttonUpdate('Phase 3.6')">Phase 3.6</button> <button type="button" onclick="buttonUpdate('Phase 3.7')">Phase 3.7</button> <button type="button" onclick="buttonUpdate('Phase 3.8')">Phase 3.8</button> <button type="button" onclick="buttonUpdate('Phase 3.9')">Phase 3.9</button> <button type="button" onclick="buttonUpdate('Phase 3.10')">Phase 3.10</button></p>
+<p><button type="button" onclick="buttonUpdate.call(this, 'Phase 3.6')" class="button selected">Phase 3.6</button> <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.7')" class="button">Phase 3.7</button> <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.8')" class="button">Phase 3.8</button> <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.9')" class="button">Phase 3.9</button> <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.10')" class="button">Phase 3.10</button></p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>
+<p><strong>Note:</strong> Not all activity information was included for people identifying as transgender.</p>
 
 
 

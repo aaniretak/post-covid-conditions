@@ -1,7 +1,9 @@
 # Interactive graph
 
+In the previous section, we analyzed what demographics are most susceptible to developing Long COVID, and looked at whether or not Long COVID poses a serious health risk in terms of lasting activity limitations. However, we did not look at what demographics experience the most serious health ramifications in terms of activity limitations. Here, you get to look at this on your own! To use our interactive tool, click on the button for **Phase** to select which phase you want to look at. The graphs above will automatically update based on what phase you select, and will show the impact of Long COVID on the 4 activity metrics included in the dataset by **Race / Ethnicity**, **Gender Identity**, and **Disability Status**. To read the legend, **Significant limitations** vs. **Any limitations** reflects if the data point is looking at the proportion of adults with either significant activity limitations or any activity limitations, while **/all adults** vs. **/adults with COVID** reflects if the proportion is out of all adults or only out of adults with COVID. See what trends you can find, and see how they compare to the same trends in Long COVID susceptibility from our previous analysis! (Hint: many should look similar)
+
 <style>
-.line {
+        .line {
             stroke: grey;
             stroke-width: 1; /* Solid line */
         }
@@ -17,12 +19,19 @@
             padding: 8px 16px;
             margin: 0 10px;
             cursor: pointer;
+            background-color: white;
+            color: black;
+        }
+        
+        .button:not(:last-child) {
+            margin-right: 10px;
         }
 
-        .selected {
+        .button.selected {
             background-color: #2196F3;
             color: white;
         }
+        
         .title {
             font-size: 18px;
             font-weight: bold;
@@ -43,12 +52,14 @@
 
 <div style="padding-left: 30px;">
   <p></p>
-  <button type="button" onclick="buttonUpdate('Phase 3.6')">Phase 3.6</button>
-  <button type="button" onclick="buttonUpdate('Phase 3.7')">Phase 3.7</button>
-  <button type="button" onclick="buttonUpdate('Phase 3.8')">Phase 3.8</button>
-  <button type="button" onclick="buttonUpdate('Phase 3.9')">Phase 3.9</button>
-  <button type="button" onclick="buttonUpdate('Phase 3.10')">Phase 3.10</button>
+  <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.6')" class="button selected">Phase 3.6</button>
+  <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.7')" class="button">Phase 3.7</button>
+  <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.8')" class="button">Phase 3.8</button>
+  <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.9')" class="button">Phase 3.9</button>
+  <button type="button" onclick="buttonUpdate.call(this, 'Phase 3.10')" class="button">Phase 3.10</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>
+
+**Note:** Not all activity information was included for people identifying as transgender.

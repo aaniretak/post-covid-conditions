@@ -53,7 +53,7 @@
     "href": "d3graph.html",
     "title": "4  Interactive graph",
     "section": "",
-    "text": "Phase 3.6 Phase 3.7 Phase 3.8 Phase 3.9 Phase 3.10"
+    "text": "In the previous section, we analyzed what demographics are most susceptible to developing Long COVID, and looked at whether or not Long COVID poses a serious health risk in terms of lasting activity limitations. However, we did not look at what demographics experience the most serious health ramifications in terms of activity limitations. Here, you get to look at this on your own! To use our interactive tool, click on the button for Phase to select which phase you want to look at. The graphs above will automatically update based on what phase you select, and will show the impact of Long COVID on the 4 activity metrics included in the dataset by Race / Ethnicity, Gender Identity, and Disability Status. To read the legend, Significant limitations vs. Any limitations reflects if the data point is looking at the proportion of adults with either significant activity limitations or any activity limitations, while /all adults vs. /adults with COVID reflects if the proportion is out of all adults or only out of adults with COVID. See what trends you can find, and see how they compare to the same trends in Long COVID susceptibility from our previous analysis! (Hint: many should look similar)\n\n\n\n\n\n\n\nPhase 3.6 Phase 3.7 Phase 3.8 Phase 3.9 Phase 3.10\n\n\n\nNote: Not all activity information was included for people identifying as transgender."
   },
   {
     "objectID": "conclusion.html",
