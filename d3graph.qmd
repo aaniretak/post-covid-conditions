@@ -1,9 +1,41 @@
 # Interactive graph
 
 <style>
-  * {
-    font-family: sans-serif;
-  }
+.line {
+            stroke: grey;
+            stroke-width: 1; /* Solid line */
+        }
+
+        .button-container {
+            margin-top: 20px;
+            margin-left: 330px;
+            margin-right: 110px;
+        }
+
+        .button {
+            font-size: 14px;
+            padding: 8px 16px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background-color: #2196F3;
+            color: white;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            font-family: 'Your Chosen Font', sans-serif; 
+            margin-left: 270px;
+        }
+        .legend {
+            margin-top: 20px;
+            margin-left: 550px;
+            margin-right: 110px;
+        }
 </style> 
 
 <div id="plot">
