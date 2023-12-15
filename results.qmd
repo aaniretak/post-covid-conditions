@@ -10,8 +10,12 @@ To answer this question best, we chose to look at only rows in our dataset conta
 
 # Import Required Libraries
 library(dplyr)
-library(ggplot2)
 library(forcats)
+library(tidyr)
+library(tibble)
+library(ggplot2)
+library(choroplethr)
+library(choroplethrMaps)
 
 # Import Data
 pcc <- read.csv("Post-COVID_Conditions.csv")
@@ -199,6 +203,36 @@ RenamedPcc %>%
   coord_flip()
 ```
 Whether someone is disabled or not seems to be one of the most impactful factors, since adults with disabilities have 2-3 times higher rates of Long COVID than those of the non-disabled adults. This pattern can be observed during all phases, and both among those claiming to be currently experiencing Long COVID during each phase and those claiming to have ever experienced Long COVID.
+
+Finally, we wanted to look at if certain states had a higher proportion of adults affected by Long COVID compared to other states. Since there were already 50 states that we needed to display, we chose to average the value for each state across all time periods, in order to make the data easier to graph. We also chose to separately graph the percentage of adults currently experiencing Long COVID and the percentage of adults that ever experienced Long COVID, again as a percentage of all adults who ever had COVID, as it would be less effective visually if these values were overlayed.
+```{r}
+statesdf1 <- RenamedPcc %>%
+  filter(Indicator=="Currently experiencing long COVID, as a percentage of adults who ever had COVID" & 
+           Group =="By State") %>%
+  mutate(region = tolower(Subgroup), value = Value) %>%
+  select(region, value) %>%
+  group_by(region) %>%
+  summarise(value = mean(value))
+
+state_choropleth(statesdf1,
+                 title = "% of Adults that Currently have Long COVID, out of All Adults who Ever had COVID",
+                 legend = "Average %",
+                 num_colors = 8)
+```
+```{r}
+statesdf2 <- RenamedPcc %>%
+  filter(Indicator=="Ever experienced long COVID, as a percentage of adults who ever had COVID" & 
+           Group =="By State") %>%
+  mutate(region = tolower(Subgroup), value = Value) %>%
+  select(region, value) %>%
+  group_by(region) %>%
+  summarise(value = mean(value))
+
+state_choropleth(statesdf2,
+                 title = "% of Adults that Ever had Long COVID, out of All Adults who Ever had COVID",
+                 legend = "Average %", num_colors = 8)
+```
+From these graphs, we see that indeed, adults from certain states are more likely to develop Long COVID than other states. In particular, states in the South and Midwest, such as West Virginia, Alabama, Mississippi, and Oklaholma, fall in the highest average % bracket across both graphs, while states in the Northesast, such as Massachussets, New Jersey, New York, and New Hampshire fall in either the lowest or the second-to-lowest average % bracket across both graphs. The exact reason behing these reasons is not known from this graphic alone, but it is still interesting that such stark differences between states can be observed even when taking the average percentage-per-state across all time periods.
 
 ## Exploring the impact of Long COVID on activity limitations
 
